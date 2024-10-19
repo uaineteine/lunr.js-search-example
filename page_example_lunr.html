@@ -4,53 +4,69 @@
     <meta charset="UTF-8">
     <title>Searchable Markdown</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+        }
         .searchable {
             font-size: 16px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
         }
     </style>
-    <script src="C:\Users\Daniel\Documents\work\ABS\DA\exp notes\searchable\lunr-2.3.9.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/2.3.9/lunr.min.js"></script>
 </head>
 <body>
+    <h1>Searchable Markdown</h1>
     <input type="text" id="searchInput" class="searchable" placeholder="Search...">
-    <div id="content">
-        <!-- Your markdown content will be rendered here -->
-    </div>
+    <div id="content"></div>
 
     <script>
-        // Your document index goes here
-        var documents = [
-            { "id": "1", "title": "Page 1", "content": "Content of page 1..." },
-            { "id": "2", "title": "Page 2", "content": "Content of page 2..." },
-            // Add more pages as necessary
-        ];
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var documents = [
+                { "id": "1", "title": "Page 1", "content": "Content of page 1. Welcome to Page 1. This is a sample markdown file to demonstrate how content can be rendered and searched. This is where the main content of Page 1 goes. You can add paragraphs, lists, images, code snippets, and more. Here's a subsection with more detailed information. Thank you for visiting Page 1." },
+                { "id": "2", "title": "Page 2", "content": "Content of page 2. Welcome to Page 2. This file contains different content to showcase the search functionality across multiple pages. Let's dive into the details of Page 2. You can add various elements like tables, links, and blockquotes. This concludes the content for Page 2. Hope you found it useful!" }
+            ];
 
-        // Initialize lunr.js
-        var idx = lunr(function() {
-            this.ref('id');
-            this.field('title');
-            this.field('content');
-            documents.forEach(function(doc) {
-                this.add(doc)
-            }, this)
-        });
+            var idx = lunr(function() {
+                this.ref('id');
+                this.field('title');
+                this.field('content');
+                documents.forEach(function(doc) {
+                    this.add(doc);
+                }, this);
+            });
 
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            var query = this.value;
-            var results = idx.search(query);
-            var content = document.getElementById('content');
-            content.innerHTML = "";
+            document.getElementById('searchInput').addEventListener('keyup', function() {
+                var query = this.value;
+                var results = idx.search(query);
+                var content = document.getElementById('content');
+                content.innerHTML = "";
 
-            if (results.length > 0) {
-                results.forEach(function(result) {
-                    var match = documents.find(doc => doc.id === result.ref);
-                    content.innerHTML += `<h2>${match.title}</h2><p>${match.content}</p>`;
-                });
-            } else {
-                content.innerHTML = "<p>No results found</p>";
-            }
+                if (results.length > 0) {
+                    results.forEach(function(result) {
+                        var match = documents.find(doc => doc.id === result.ref);
+                        content.innerHTML += `<h2>${match.title}</h2><p>${match.content}</p>`;
+                    });
+                } else {
+                    content.innerHTML = "<p>No results found</p>";
+                }
+            });
         });
     </script>
 </body>
