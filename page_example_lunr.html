@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Searchable Markdown</title>
+    <style>
+        .searchable {
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+    <script src="C:\Users\Daniel\Documents\work\ABS\DA\exp notes\searchable\lunr-2.3.9.js"></script>
+</head>
+<body>
+    <input type="text" id="searchInput" class="searchable" placeholder="Search...">
+    <div id="content">
+        <!-- Your markdown content will be rendered here -->
+    </div>
+
+    <script>
+        // Your document index goes here
+        var documents = [
+            { "id": "1", "title": "Page 1", "content": "Content of page 1..." },
+            { "id": "2", "title": "Page 2", "content": "Content of page 2..." },
+            // Add more pages as necessary
+        ];
+
+        // Initialize lunr.js
+        var idx = lunr(function() {
+            this.ref('id');
+            this.field('title');
+            this.field('content');
+            documents.forEach(function(doc) {
+                this.add(doc)
+            }, this)
+        });
+
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            var query = this.value;
+            var results = idx.search(query);
+            var content = document.getElementById('content');
+            content.innerHTML = "";
+
+            if (results.length > 0) {
+                results.forEach(function(result) {
+                    var match = documents.find(doc => doc.id === result.ref);
+                    content.innerHTML += `<h2>${match.title}</h2><p>${match.content}</p>`;
+                });
+            } else {
+                content.innerHTML = "<p>No results found</p>";
+            }
+        });
+    </script>
+</body>
+</html>
